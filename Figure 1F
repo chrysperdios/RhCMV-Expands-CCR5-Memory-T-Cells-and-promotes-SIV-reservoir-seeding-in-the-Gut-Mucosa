@@ -1,0 +1,26 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) + 
+	font("legend.text", size = 30) + font("legend.title", size = 30, face = "bold")
+
+comparisons = list(c("CCR5-", "CCR5+"))
+
+#import data
+Fig_1F = read_excel("Supporting data values.xlsx", sheet = "Fig.1F")
+
+#set CCR5 status as factor
+Fig_1F$CCR5 = factor(Fig_1F$CCR5, levels = c("CCR5-", "CCR5+"))
+
+#boxplot
+png(width = 500, height = 1000, file = "CD4Ttm.CCR5_CXCR3.png")
+ggboxplot(Fig_1F, x = "CCR5", y = "CXCR3", ylab = "CXCR3+ (% of CCR5+/- CD4+ Tctm)", bxp.errorbar = TRUE, 
+	add = "point", legend = "", xlab = "", ylim = c(0, 110), size = 1, color = "CCR5", 
+	add.params = list(size = 8), palette = c("darkgreen", "orange")) + scale_y_continuous(n.breaks = 10) + 
+	border() + stat_compare_means(comparisons = comparisons, method = "wilcox", label.y = c(104), 
+	label = "p.signif", paired = TRUE, size = 20, bracket.size = 1) + geom_line(aes(group = sample), 
+	alpha = 0.4, linewidth = 1) + PlotFonts
+dev.off()
