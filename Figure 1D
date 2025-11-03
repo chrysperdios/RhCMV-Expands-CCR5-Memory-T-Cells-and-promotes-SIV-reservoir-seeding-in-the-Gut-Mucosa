@@ -1,0 +1,36 @@
+#load libraries
+library(readxl)
+library(tidyverse)
+
+#import data
+Fig_1D = read_excel("Supporting data values.xlsx", sheet = "Fig.1D")
+
+#make PCA plot
+Y = Fig_1D[c(3:length(Fig_1D))]
+pca = prcomp(Y, center = TRUE, scale = TRUE)
+
+#make pretty PCA
+pca.results = data.frame(pca$x)[,1:2]
+pca.results$target = paste0(Fig_1D$CCR5)
+
+#set centroid labels and color
+centroid = aggregate(cbind(PC1, PC2) ~ target, data = pca.results, FUN = mean)
+pca.results1 = left_join(pca.results, centroid, by = "target", suffix = c("",".cen"))
+cols = c("darkgreen", "orange")
+
+ggtheme = theme(legend.title = element_blank(), axis.text.y = element_text(colour = "black", size = 40),
+    axis.text.x = element_text(colour = "black", size = 40), axis.title = element_text(colour = "black", 
+	size = 20), legend.position = "right", legend.text = element_text(size = 25),
+    legend.key = element_rect(fill = NA), legend.key.size = unit(0.7, "cm"),
+    legend.box.spacing = unit(0, "cm"), panel.border = element_rect(colour = "black", fill = NA, 
+	linewidth = 1), panel.background = element_blank(), plot.title = element_text(hjust = 0.5, size = 50))
+
+#PCA plot
+png(file = "PCA LN_CCR5.png", width = 1000, height = 1000)
+ggplot(pca.results1,aes(x = PC1, y = PC2)) + geom_vline(xintercept = 0, lty = "dashed", linewidth = 1) +
+	geom_hline(yintercept = 0, lty = "dashed", linewidth = 1) + geom_point(aes(color = target), size = 15) +
+	geom_segment(aes(xend = PC1.cen, yend = PC2.cen, color = target), show.legend = FALSE) +
+	ggtheme + scale_colour_manual(values = cols) +
+	geom_label(data = centroid, aes(label = target, fill = target), size = 20, show.legend = FALSE, 
+	color = "white") + scale_fill_manual(values = cols) + theme(legend.position = "")
+dev.off()
