@@ -1,0 +1,87 @@
+#load libraries
+library(readxl)
+library(tidyverse)
+library(ComplexHeatmap)
+library(RColorBrewer)
+
+#settings
+custom_legend = list(title_gp = gpar(fontsize = 30), labels_gp = gpar(fontsize = 20), 
+	legend_height = unit(5, "cm"))
+
+Tissue = c("Blood", "pLN", "BM", "Duodenum", "Colon")
+tissue_annots = rowAnnotation(Tissue = Tissue, col = list(Tissue = 
+	c("Blood" = "pink", "pLN" = "brown", "BM" = "green", "Duodenum" = "orange", "Colon" = "black")), 
+	annotation_name_gp = gpar(fontsize = 20), annotation_legend_param = custom_legend)
+	
+#import data
+Fig_1A = read_excel("Supporting data values.xlsx", sheet = "Fig.1A")
+
+#split data into three dataframes
+text_cols = Fig_1A %>% select(where(~!is.numeric(.)))
+num_cols = Fig_1A %>% select(where(is.numeric))
+imap(num_cols, ~ assign(.y, bind_cols(text_cols, tibble(!!.y := .x)),
+	envir = .GlobalEnv))
+
+#pivot wider
+ CD4TotalMem.CCR5 = CD4TotalMem.CCR5 %>% pivot_wider(id_cols =  c(sample, cmv), 
+	names_from = tissue, values_from = CD4TotalMem.CCR5)
+
+CD4TotalMem.HLADR = CD4TotalMem.HLADR %>% pivot_wider(id_cols =  c(sample, cmv), 
+	names_from = tissue, values_from = CD4TotalMem.HLADR)
+
+CD4TotalMem.Ki67 = CD4TotalMem.Ki67 %>% pivot_wider(id_cols =  c(sample, cmv), 
+	names_from = tissue, values_from = CD4TotalMem.Ki67)
+
+#CD4TotalMem.CCR5
+cmv_annots = HeatmapAnnotation(CMV = CD4TotalMem.CCR5$cmv, col = list(CMV = c("neg" = "blue", "pos" = "red")),
+	annotation_name_gp = gpar(fontsize = 20), annotation_legend_param = list(
+	title_gp = gpar(fontsize = 30), labels_gp = gpar(fontsize = 20), legend_height = unit(5, "cm")))
+	
+matrix_CD4TotalMem.CCR5 = scale(CD4TotalMem.CCR5[3:length(CD4TotalMem.CCR5)], center = TRUE, scale = TRUE)
+matrix_CD4TotalMem.CCR5 = t(matrix_CD4TotalMem.CCR5)
+
+png(file = "CD4TotalMem.CCR5.png", height = 1000, width = 1000)
+Heatmap(matrix_CD4TotalMem.CCR5, col = colorRampPalette(colors = c("blue","white","red"))(100), cluster_columns = TRUE, 
+	cluster_rows = TRUE, name = "z-score", show_row_dend = TRUE, clustering_distance_rows = "euclidean", 
+	show_column_names = FALSE, show_row_names = TRUE, rect_gp = gpar(col = "black", lty = 1, lwd = .1),
+	top_annotation = cmv_annots, row_labels = Tissue, column_labels = CD4TotalMem.CCR5$sample,
+	column_names_gp = gpar(fontsize = 30), row_names_gp = gpar(fontsize = 30), heatmap_legend_param = custom_legend,
+	heatmap_height = unit(1.4, "cm")*nrow(matrix_CD4TotalMem.CCR5), 
+	heatmap_width = unit(5.5, "cm")*nrow(matrix_CD4TotalMem.CCR5))
+dev.off()
+
+#CD4TotalMem.HLADR
+cmv_annots = HeatmapAnnotation(CMV = CD4TotalMem.HLADR$cmv, col = list(CMV = c("neg" = "blue", "pos" = "red")),
+	annotation_name_gp = gpar(fontsize = 20), annotation_legend_param = list(
+	title_gp = gpar(fontsize = 30), labels_gp = gpar(fontsize = 20), legend_height = unit(5, "cm")))
+	
+matrix_CD4TotalMem.HLADR = scale(CD4TotalMem.HLADR[3:length(CD4TotalMem.HLADR)], center = TRUE, scale = TRUE)
+matrix_CD4TotalMem.HLADR = t(matrix_CD4TotalMem.HLADR)
+
+png(height = 1000, width = 1000, file = "CD4TotalMem.HLADR.png")
+Heatmap(matrix_CD4TotalMem.HLADR, col = colorRampPalette(colors = c("blue","white","red"))(99), cluster_columns = TRUE, 
+	cluster_rows = TRUE, name = "z-score", show_row_dend = TRUE, clustering_distance_rows = "euclidean", 
+	show_column_names = FALSE, show_row_names = TRUE, rect_gp = gpar(col = "black", lty = 1, lwd = .1),
+	top_annotation = cmv_annots, row_labels = Tissue, column_labels = CD4TotalMem.HLADR$sample,
+	column_names_gp = gpar(fontsize = 30), row_names_gp = gpar(fontsize = 30), heatmap_legend_param = custom_legend,
+	heatmap_height = unit(1.4, "cm")*nrow(matrix_CD4TotalMem.HLADR), 
+	heatmap_width = unit(5.5, "cm")*nrow(matrix_CD4TotalMem.HLADR))
+dev.off()
+
+#CD4TotalMem.Ki67
+cmv_annots = HeatmapAnnotation(CMV = CD4TotalMem.Ki67$cmv, col = list(CMV = c("neg" = "blue", "pos" = "red")),
+	annotation_name_gp = gpar(fontsize = 20), annotation_legend_param = list(
+	title_gp = gpar(fontsize = 30), labels_gp = gpar(fontsize = 20), legend_height = unit(5, "cm")))
+
+matrix_CD4TotalMem.Ki67 = scale(CD4TotalMem.Ki67[3:length(CD4TotalMem.Ki67)], center = TRUE, scale = TRUE)
+matrix_CD4TotalMem.Ki67 = t(matrix_CD4TotalMem.Ki67)
+
+png(height = 1000, width = 1000, file = "CD4TotalMem.Ki67.png")
+Heatmap(matrix_CD4TotalMem.Ki67, col = colorRampPalette(colors = c("blue","white","red"))(100), cluster_columns = TRUE, 
+	cluster_rows = TRUE, name = "z-score", show_row_dend = TRUE, clustering_distance_rows = "euclidean", 
+	show_column_names = FALSE, show_row_names = TRUE, rect_gp = gpar(col = "black", lty = 1, lwd = .1),
+	top_annotation = cmv_annots, row_labels = Tissue, column_labels = CD4TotalMem.Ki67$sample,
+	column_names_gp = gpar(fontsize = 30), row_names_gp = gpar(fontsize = 30), heatmap_legend_param = custom_legend,
+	heatmap_height = unit(1.4, "cm")*nrow(matrix_CD4TotalMem.Ki67), 
+	heatmap_width = unit(5.5, "cm")*nrow(matrix_CD4TotalMem.Ki67))
+dev.off()
