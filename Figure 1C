@@ -1,0 +1,23 @@
+#load libraries
+library(readxl)
+library(tidyverse)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+	
+comparisons = list(c("pos", "neg"))
+
+#import data
+Fig_1C = read_excel("Supporting data values.xlsx", sheet = "Fig.1C")
+
+#boxplot
+png(width = 1000, height = 1000, file = "CD4TotalMem.CCR5 LN.png")
+ggboxplot(Fig_1C, x = "Subpopulation", xlab = "", y = "percent", 
+	ylab = "CCR5+ (% of CD4+ subpopulation)", color = "cmv", add = "jitter", size = 2,
+	palette = c("blue", "red"), add.params = list(size = 8), ylim = c(0, 25), bxp.errorbar = TRUE) + 
+	scale_y_continuous(n.breaks = 10) + geom_pwc(aes(group = cmv), method = "wilcox_test", label = "p.signif", 
+	tip.length = 0.01, size = 1, label.size = 20, y.position = 22) + border() + PlotFonts
+dev.off()
