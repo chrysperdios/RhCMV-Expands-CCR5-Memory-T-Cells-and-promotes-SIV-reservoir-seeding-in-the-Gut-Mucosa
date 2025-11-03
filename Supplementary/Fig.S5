@@ -1,0 +1,26 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) + 
+	font("legend.text", size = 30) + font("legend.title", size = 30, face = "bold")
+
+comparisons = list(c("CMV_lysate", "Control"))
+
+#import data
+Fig_S5 = read_excel("Supporting data values.xlsx", sheet = "Fig.S5")
+
+#set lysate vs control as factor
+Fig_S5$status = factor(Fig_S5$status, levels = c("CMV_lysate", "Control"))
+
+#boxplot
+png(width = 500, height = 1000, file = "CMV reactivity control.png")
+ggboxplot(Fig_S5, x = "status", xlab = "", y = "CMVrea_CD40L", ylab = "CCR5+ (% of CD4+ T cells)", 
+	add = "point", color = "status", legend = "", palette = c("brown4", "black"), size = 1, 
+	add.param = list(size = 8), ylim = c(0, 16), bxp.errorbar = TRUE) + stat_compare_means(
+	comparisons = comparisons, method = "wilcox", label.y = c(14), size = 20, bracket.size = 1, 
+	label = "p.signif", paired = TRUE) + rotate_x_text(45) + border () + scale_y_continuous(n.breaks = 10) + 
+	geom_line(aes(group = sample), alpha = 0.4, linewidth = 1) + PlotFonts
+dev.off()
