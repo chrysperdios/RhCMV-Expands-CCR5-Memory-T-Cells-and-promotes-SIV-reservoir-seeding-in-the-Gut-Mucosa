@@ -13,8 +13,8 @@ comparisons = list(c("f", "m"))
 Fig_S3B = read_excel("Supporting data values.xlsx", sheet = "Fig.S3B")
 
 #order factor levels
-Fig_S3B$sex = factor(Baseline_all$sex, levels = c("f", "m"))
-Fig_S3B$tissue = factor(Baseline_all$tissue, levels = c("Blood", "LN", "BM", "Duodenum", "Colon"))
+Fig_S3B$sex = factor(Fig_S3B$sex, levels = c("f", "m"))
+Fig_S3B$tissue = factor(Fig_S3B$tissue, levels = c("Blood", "LN", "BM", "Duodenum", "Colon"))
 
 #boxplots
 boxplots_Base_CD4TotalMem.CCR5 = ggboxplot(Fig_S3B, x = "sex", xlab = "Sex", y = "CD4TotalMem.CCR5", 
