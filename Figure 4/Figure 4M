@@ -1,0 +1,23 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+#import data
+Fig_4M = read_excel("Supporting data values.xlsx", sheet = "Fig.4M")
+
+#boxplot
+boxplot_CD4TotalMem.CXCR3 = ggboxplot(SIV_Ddnm_Colon, x = "cmv", xlab = "", y = "CD4TotalMem.CXCR3", 
+	ylab = "CXCR3+ (% of CD4+ total memory)", color = "cmv", add = "jitter", size = 2, legend = "",
+	palette = c("blue", "red"), add.params = list(size = 8), ylim = c(0, 70), bxp.errorbar = TRUE) + 
+	scale_y_continuous(n.breaks = 10) + stat_compare_means(comparisons = comparisons, method = "wilcox", 
+	label.y = c(60), size = 20, bracket.size = 1, label = "p.signif") + border() + PlotFonts
+
+png(width = 1000, height = 1000, file = "SIV_Ddnm_Colon CD4TotalMem.CXCR3.png")
+facet(boxplot_CD4TotalMem.CXCR3, facet.by = c("tissue"), nrow = 1, panel.labs.font = list(size = 62), 
+	panel.labs.font.x = list(size = 60))
+dev.off()
