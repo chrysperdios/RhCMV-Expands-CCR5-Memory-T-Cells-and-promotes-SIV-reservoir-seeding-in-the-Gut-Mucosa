@@ -1,0 +1,29 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+library(scales)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+#import data
+Fig_5C = read_excel("Supporting data values.xlsx", sheet = "Fig.5C")
+
+#set Tissue levels
+Fig_5C$Tissue = factor(Fig_5C$Tissue, level = c("Duodenum", "Colon"))
+
+#scatter plot
+correlation_SIV_CXCL9_gut = ggscatter(Fig_5C, x = "Cell_per_1e6", y = "CXCL9", 
+	color = "CMV", size = 8, palette = c("blue", "red"), ylab = "CXCL9 (NPX)", 
+	xlab = "SIV DNA/million cells equivalence", ylim = c(0, 10)) + geom_smooth(aes(group = 1), 
+	method = "lm", color = "black") + scale_y_continuous(n.breaks = 10) + border() + 
+	stat_cor(method = "spearman", size = 15, label.y = 9, r.accuracy = 0.001, 
+	label.sep = "\n") + PlotFonts + scale_x_log10(breaks = c(1, 10, 100, 1000, 10000, 100000,
+	1000000, 10000000), labels = trans_format("log10", math_format(10^.x)))
+
+png(width = 1500, height = 1000, file = "SIV_CXCL9_gut.png")
+facet(correlation_SIV_CXCL9_gut, facet.by = c("Tissue"), nrow = 1, 
+	panel.labs.font = list(size = 60), panel.labs.font.x = list(size = 60))
+dev.off()
