@@ -1,0 +1,21 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+#import data
+Fig_4B = read_excel("Supporting data values.xlsx", sheet = "Fig.4B")
+
+#scatter plot
+png(width = 1000, height = 1000, file = "SIV_Blood Monocytes.CD169.png")
+ggscatter(Fig_4B, x = "DPI14", y = "Monocytes.CD169", color = "cmv", 	ylim = c(0, 29000),
+	palette = c("blue", "red"), size = 8, ylab = "CD169+ (MFI of monocytes)", 
+	xlab = "Day 13/14 plasma VL (log2 copies/ml)") +  geom_smooth(aes(group = 1), method = "lm", 
+	color = "black") + scale_y_continuous(n.breaks = 10) + scale_x_continuous(n.breaks = 6) + 
+	stat_cor(method = "spearman", size = 15, label.y = 27000, r.accuracy = 0.001, 
+	label.sep = "\n", p.accuracy = 0.0001) + border() + PlotFonts
+dev.off()
