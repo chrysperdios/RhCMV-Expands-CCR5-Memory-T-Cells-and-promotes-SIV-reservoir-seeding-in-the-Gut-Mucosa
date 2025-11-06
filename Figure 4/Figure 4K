@@ -1,0 +1,22 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+#import data
+Fig_4K = read_excel("Supporting data values.xlsx", sheet = "Fig.4K")
+
+#errorplot
+png(width = 600, height = 1000, file = "Ddnm_Colon CD4.CCR5 logFC.png")
+ggerrorplot(Fig_4K, x = "tissue", xlab = "", y = "CD4.CCR5", add = c("mean"), 
+	add.params = list(size = 3), ylim = c(-3.5, 0), ylab = "CD4+CCR5+ T cells % (log2 FC)", 
+	color = "cmv", size = 2, error.plot = "errorbar", palette = c("blue", "red"),  
+	position = position_dodge(0.4)) + scale_y_continuous(n.breaks = 10) + 
+	geom_hline(yintercept = 0, linetype = 2) + border() + geom_pwc(aes(group = cmv), 
+	method = "wilcox_test", label = "p.signif", tip.length = 0.01, size = 1, label.size = 20, 
+	y.position = -0.7) + rotate_x_text() + PlotFonts
+dev.off()
