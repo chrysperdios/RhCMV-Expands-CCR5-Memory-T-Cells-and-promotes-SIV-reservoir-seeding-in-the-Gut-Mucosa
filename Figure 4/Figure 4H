@@ -1,0 +1,25 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+library(scales)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+options(scipen = 999)
+
+#import data
+Fig_4H = read_excel("Supporting data values.xlsx", sheet = "Fig.4H")
+
+#scatter plot
+png(width = 1000, height = 1000, file = "Ddnm_SIV_CD8TotalMem.Ki67.png")
+ggscatter(Fig_4H, x = "Cell_per_1e6", y = "CD8TotalMem.Ki67", color = "cmv", size = 8, 
+	palette = c("blue", "red"), ylim = c(0, 70), ylab = "Ki-67+ (% of CD8+ total memory)", 
+	xlab = "SIV DNA copies/million cells equivalence") + geom_smooth(aes(group = 1), 
+	method = "lm", color = "black") + scale_y_continuous(n.breaks = 10) + 
+	scale_x_log10(breaks = c(10000, 100000, 1000000), labels = trans_format("log10", 
+	math_format(10^.x))) + border() + stat_cor(method = "spearman", size = 15, label.y = 4, 
+	r.accuracy = 0.001, label.sep = "\n", p.accuracy = 0.0001) + PlotFonts
+dev.off()
