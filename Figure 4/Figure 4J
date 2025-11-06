@@ -1,0 +1,30 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+set.seed(3686)
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+comparisons = list(c("neg", "pos"))
+
+#import data
+Fig_4J = read_excel("Supporting data values.xlsx", sheet = "Fig.4J")
+
+#set order of factor levels
+Fig_4J$cmv = factor(Fig_4J$cmv, levels = c("neg", "pos"))
+Fig_4J$tissue = factor(Fig_4J$tissue, levels = c("PBMC", "LN", "BM", "Duodenum", "Colon"))
+
+#CD4TotalMem.CCR5
+boxplot_CD4TotalMem.CCR5 = ggboxplot(Fig_4J, x = "cmv", xlab = "CMV Status", y = "CD4TotalMem.CCR5", 
+	ylab = "CCR5+ (% of CD4+ total memory)", color = "cmv", add = "jitter", size = 2, legend = "",
+	palette = c("blue", "red"), add.params = list(size = 8), ylim = c(0, 60), bxp.errorbar = TRUE) + 
+	scale_y_continuous(n.breaks = 10) + stat_compare_means(comparisons = comparisons, method = "wilcox", 
+	label.y = c(54), size = 20, bracket.size = 1, label = "p.signif") + border() + PlotFonts
+
+png(width = 2000, height = 1000, file = "SIV_all CD4TotalMem.CCR5.png")
+facet(boxplot_CD4TotalMem.CCR5, facet.by = c("tissue"), nrow = 1, panel.labs.font = list(size = 62), 
+	panel.labs.font.x = list(size = 60))
+dev.off()
