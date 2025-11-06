@@ -1,0 +1,62 @@
+#load libraries
+library(readxl)
+library(tidyverse)
+library(circlize)
+
+#settings
+set.seed(3686)
+
+#import data
+Fig_2B = read_excel("Supporting data values.xlsx", sheet = "Fig.2B")
+
+#split based on sample
+cogent_chord_data = split(Fig_2B, Fig_2B$Sample)
+
+#create connection color scheme
+cogent_chord_col = list()
+for(i in 1:length(cogent_chord_data)) {
+	cogent_chord_col[[i]] = cogent_chord_data[[i]][, c("AIM", "CCR5")] %>% 
+		mutate(Overlap = case_when(AIM > 0 & CCR5 > 0 ~ "yes", TRUE ~ "no")) %>% 
+		mutate(Color = ifelse(Overlap == "yes", "#4d4d4d66", "#00000000"))}
+
+names(cogent_chord_col) = names(cogent_chord_data)
+
+#create major tickmarks
+cogent_chord_major = list()
+for(i in 1:length(cogent_chord_data)) {
+	cogent_chord_major[[i]] = cogent_chord_data[[i]] %>% select(AIM, CCR5) %>% 
+		mutate(AIM = cumsum(sort(AIM, decreasing = TRUE)),
+		CCR5 = cumsum(sort(CCR5, decreasing = TRUE))) %>% 
+		add_row(AIM = 0, CCR5 = 0, .before = 1)}
+
+names(cogent_chord_major) = names(cogent_chord_data)
+
+#create grid color scheme
+grid_col = tibble(Sector = c("AIM", "CCR5"), Color = c("purple", "orange"))
+
+#create chord diagram
+for(i in 1:length(cogent_chord_data)) {
+	pdf(width = 10, height = 10, file = 
+		paste0("Cogent circos ", names(cogent_chord_data[i]), ".pdf"))
+
+	circos.par(start.degree = 90, gap.degree = 1)
+
+	chordDiagram(cogent_chord_data[[i]], col = cogent_chord_col[[i]]$Color, grid.col = grid_col$Color,
+		annotationTrack = c("grid"), preAllocateTracks = list(track.height = 0.25), 
+		link.sort = TRUE, link.decreasing = TRUE)
+
+	circos.track(track.index = 1, panel.fun = function(x, y) {
+		circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, cex = 2,
+		facing = "clockwise", niceFacing = TRUE, adj = c(-0.2, 0.3))}, bg.border = NA)
+	
+	circos.trackPlotRegion(track.index = 2, panel.fun = function(x, y) {
+		if (CELL_META$sector.index == "AIM") {circos.axis(labels = FALSE, 
+			major.tick.length = 1, direction = "inside",
+			major.at = cogent_chord_major[[i]]$AIM, minor.ticks = 0)} 
+		else if (CELL_META$sector.index == "CCR5") {circos.axis(labels = FALSE, 
+			major.tick.length = 1, direction = "inside",
+			major.at = cogent_chord_major[[i]]$CCR5, minor.ticks = 0)}}, 
+		bg.border = NA)
+
+	dev.off()
+	circos.clear()}
