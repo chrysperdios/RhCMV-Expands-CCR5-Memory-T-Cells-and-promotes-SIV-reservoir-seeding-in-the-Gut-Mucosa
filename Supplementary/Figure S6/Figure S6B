@@ -1,0 +1,24 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+comparisons = list(c("f", "m"))
+
+#import data
+Fig_S6B = read_excel("Supporting data values.xlsx", sheet = "Fig.S6B")
+
+#order factor levels
+Fig_S6B$sex = factor(Fig_S6B$sex, levels = c("f", "m"))
+
+png(width = 500, height = 1000, file = "Sex plasma VL.png")
+ggboxplot(Fig_S6B, x = "sex", y = "VClog", ylab = "Plasma VL (log10 copies/ml)", 
+	color = "sex", add = c("jitter"), legend = "", size = 1, palette = c("blue", "red"), xlab = "",
+	add.params = list(size = 5), ylim = c(0, 9), bxp.errorbar = TRUE) + scale_y_continuous(n.breaks = 10) + 
+	stat_compare_means(comparisons = comparisons, method = "wilcox", label.y = c(8.7), size = 20, 
+	bracket.size = 1, label = "p.signif") + border() + PlotFonts
+dev.off()
