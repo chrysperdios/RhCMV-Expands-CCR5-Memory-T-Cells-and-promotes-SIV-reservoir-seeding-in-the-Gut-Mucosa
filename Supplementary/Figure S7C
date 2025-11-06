@@ -1,0 +1,21 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+#import data
+Fig_S7C = read_excel("Supporting data values.xlsx", sheet = "Fig.S7C")
+
+#scatter plot
+png(width = 1000, height = 1000, file = "PBMC CD8TotalMem.HLADR vs CD8Tem.png")
+ggscatter(Fig_S7C, x = "CD8Tem", y = "CD8TotalMem.HLADR", color = "cmv", 
+	palette = c("blue", "red"), size = 8, ylab = "HLA-DR+ (% of CD8+ total memory)", 
+	xlab = "Tem (% of CD8+ lymphocytes)", ylim = c(0, 35)) + geom_smooth(aes(group = 1), 
+	method = "lm", color = "black") + scale_y_continuous(n.breaks = 10) + 
+	scale_x_continuous(n.breaks = 5) + stat_cor(method = "spearman", size = 15, label.y = 30, 
+	r.accuracy = 0.001, label.sep = "\n", p.accuracy = 0.0001) + border() + PlotFonts
+dev.off()
