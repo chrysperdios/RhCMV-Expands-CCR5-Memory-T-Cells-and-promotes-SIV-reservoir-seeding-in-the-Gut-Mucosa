@@ -1,0 +1,22 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+#import data
+Fig_5D = read_excel("Supporting data values.xlsx", sheet = "Fig.5D")
+
+#scatter plot
+png(width = 1000, height = 1000, file = "SIV CXCL9vs14DPI.png")
+ggscatter(Fig_5D, x = "DPI14", y = "CXCL9", color = "cmv", size = 8, 
+	palette = c("blue", "red"), ylab = "CXCL9 (NPX)", 
+	xlab = "Day 13/14 plasma VL (log10 copies/ml)", ylim = c(0, 9)) + 
+	geom_smooth(aes(group = 1), method = "lm", color = "black") + 
+	scale_y_continuous(n.breaks = 10) + scale_x_continuous(n.breaks = 8) + border() + 
+	stat_cor(method = "spearman", size = 15, label.y = 8, r.accuracy = 0.001, 
+	label.sep = "\n") + PlotFonts
+dev.off()
