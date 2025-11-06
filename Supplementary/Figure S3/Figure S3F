@@ -13,8 +13,8 @@ comparisons = list(c("neg", "pos"))
 Fig_S3F = read_excel("Supporting data values.xlsx", sheet = "Fig.S3F")
 
 #order factor levels
-Fig_S3F$cmv = factor(Baseline_all$cmv, levels = c("neg", "pos"))
-Fig_S3F$tissue = factor(Baseline_all$tissue, levels = c("Blood", "LN", "BM", "Duodenum", "Colon"))
+Fig_S3F$cmv = factor(Fig_S3F$cmv, levels = c("neg", "pos"))
+Fig_S3F$tissue = factor(Fig_S3F$tissue, levels = c("Blood", "LN", "BM", "Duodenum", "Colon"))
 
 #boxplots
 boxplot_CD4TotalMem.CCR5.CCR5_MFI = ggboxplot(Fig_S3F, x = "cmv", xlab = "", y = "CD4TotalMem.CCR5.CCR5_MFI", 
