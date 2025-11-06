@@ -1,0 +1,23 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+comparisons = list(c("Neg", "Pos"))
+
+#import data
+Fig_5G = read_excel("Supporting data values.xlsx", sheet = "Fig.5G")
+
+#boxplot
+png(width = 500, height = 1000, file = "IFNG_SIV Conc4PL.png")	
+ggboxplot(Fig_5G, x = "CMV", y = "Conc4PL", ylab = "IFNG (pg/ml)", add = "jitter", 
+	color = "CMV", legend = "", xlab = "", size = 1, ylim = c(0, 160), 
+	add.param = list(size = 8), palette = c("blue", "red"), bxp.errorbar = TRUE) + 
+	scale_y_continuous(n.breaks = 10) + stat_compare_means(comparisons = comparisons, 
+	method = "wilcox", label.y = c(150), size = 15, bracket.size = 1, label = "p.signif") + 
+	border() + PlotFonts
+dev.off()
