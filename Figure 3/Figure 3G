@@ -1,0 +1,67 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+	
+comparisons = list(c("SIV-", "SIV+"))
+
+#import data
+Fig_3G = read_excel("Supporting data values.xlsx", sheet = "Fig.3G")
+
+#Split based on tissue
+Fig_3G = split(Fig_3G, Fig_3G$Tissue)
+
+#boxplots
+png(width = 500, height = 1000, file = "BAL.png")
+ggboxplot(Fig_3G[["BAL"]], x = "Timepoint", y = "log10", xlab = "", 
+	ylab = "CMV IE/ug tissue DNA copies (log10)", bxp.errorbar = TRUE, add = "point", 
+	legend = "", ylim = c(0, 3), size = 1, color = "red", add.params = list(size = 8)) + 
+	scale_y_continuous(n.breaks = 10) + border() + stat_compare_means(
+	comparisons = comparisons, method = "wilcox", label.y = c(2.7), label = "p.signif", 
+	paired = TRUE, size = 20, bracket.size = 1) + geom_line(aes(group = Sample), 
+	alpha = 0.4, linewidth = 1) + PlotFonts
+dev.off()
+
+png(width = 500, height = 1000, file = "Bone Marrow.png")
+ggboxplot(Fig_3G[["Bone Marrow"]], x = "Timepoint", y = "log10", xlab = "", 
+	ylab = "CMV IE/ug tissue DNA copies (log10)", bxp.errorbar = TRUE, add = "point", 
+	legend = "", ylim = c(0, 1.4), size = 1, color = "red", add.params = list(size = 8)) + 
+	scale_y_continuous(n.breaks = 10) + border() + stat_compare_means(
+	comparisons = comparisons, method = "wilcox", label.y = c(1.2), label = "p.signif", 
+	paired = TRUE, size = 20, bracket.size = 1) + geom_line(aes(group = Sample), 
+	alpha = 0.4, linewidth = 1) + PlotFonts
+dev.off()
+
+png(width = 500, height = 1000, file = "PBMC.png")
+ggboxplot(Fig_3G[["PBMC"]], x = "Timepoint", y = "log10", xlab = "", 
+	ylab = "CMV IE/ug tissue DNA copies (log10)", bxp.errorbar = TRUE, add = "point", 
+	legend = "", ylim = c(0, 1.8), size = 1, color = "red", add.params = list(size = 8)) + 
+	scale_y_continuous(n.breaks = 10) + border() + stat_compare_means(
+	comparisons = comparisons, method = "wilcox", label.y = c(1.6), label = "p.signif", 
+	paired = TRUE, size = 20, bracket.size = 1) + geom_line(aes(group = Sample), 
+	alpha = 0.4, linewidth = 1) + PlotFonts
+dev.off()
+
+png(width = 500, height = 1000, file = "Duodenum.png")
+ggboxplot(Fig_3G[["Duodenum"]], x = "Timepoint", y = "log10", xlab = "", 
+	ylab = "CMV IE/ug tissue DNA copies (log10)", bxp.errorbar = TRUE, add = "point", 
+	legend = "", ylim = c(0, 2.5), size = 1, color = "red", add.params = list(size = 8)) + 
+	scale_y_continuous(n.breaks = 10) + border() + stat_compare_means(
+	comparisons = comparisons, method = "wilcox", label.y = c(2.2), label = "p.signif", 
+	paired = TRUE, size = 20, bracket.size = 1) + geom_line(aes(group = Sample), 
+	alpha = 0.4, linewidth = 1) + PlotFonts
+dev.off()
+
+png(width = 500, height = 1000, file = "Colon.png")
+ggboxplot(Fig_3G[["Colon"]], x = "Timepoint", y = "log10", xlab = "", 
+	ylab = "CMV IE/ug tissue DNA copies (log10)", bxp.errorbar = TRUE, add = "point", 
+	legend = "", ylim = c(0, 0.8), size = 1, color = "red", add.params = list(size = 8)) + 
+	scale_y_continuous(n.breaks = 10) + border() + stat_compare_means(
+	comparisons = comparisons, method = "wilcox", label.y = c(0.75), label = "p.signif", 
+	paired = TRUE, size = 20, bracket.size = 1) + geom_line(aes(group = Sample), 
+	alpha = 0.4, linewidth = 1) + PlotFonts
+dev.off()
