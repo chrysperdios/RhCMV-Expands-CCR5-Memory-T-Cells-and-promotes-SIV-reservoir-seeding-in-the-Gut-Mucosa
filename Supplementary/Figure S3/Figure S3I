@@ -1,0 +1,25 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+comparisons = list(c("CMV-", "CMV+"))
+
+#import data
+Fig_S3I = read_excel("Supporting data values.xlsx", sheet = "Fig.S3I")
+
+#order factor levels
+Fig_S3I$CMV = factor(Fig_S3I$CMV, levels = c("CMV-", "CMV+"))
+
+#boxplots
+png(width = 500, height = 1000, file = "Human CD4TEMRA.CCR5.png")
+ggboxplot(Fig_S3I, x = "CMV", xlab = "", y = "CD4TEMRA.CCR5", ylab = "CCR5+ (% of CD4+ TEMRA)", color = "CMV", 
+	add = "jitter", size = 2, legend = "", palette = c("blue", "red"), add.params = list(size = 8), ylim = c(0, 29), 
+	bxp.errorbar = TRUE) + scale_y_continuous(n.breaks = 10) + 
+	stat_compare_means(comparisons = comparisons, method = "wilcox", label.y = 25, size = 20, bracket.size = 1, 
+	label = "p.signif") + border() + PlotFonts
+dev.off()
