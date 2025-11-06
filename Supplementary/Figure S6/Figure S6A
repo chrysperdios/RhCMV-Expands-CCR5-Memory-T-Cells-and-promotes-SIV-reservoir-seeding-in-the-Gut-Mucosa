@@ -1,0 +1,24 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+comparisons = list(c("neg", "pos"))
+
+#import data
+Fig_S6A = read_excel("Supporting data values.xlsx", sheet = "Fig.S6A")
+
+#order factor levels
+Fig_S6A$LCV = factor(Fig_S6A$LCV, levels = c("neg", "pos"))
+
+png(width = 500, height = 1000, file = "LCV plasma VL.png")
+ggboxplot(Fig_S6A, x = "LCV", y = "VClog", ylab = "Plasma VL (log10 copies/ml)", 
+	color = "LCV", add = c("jitter"), legend = "", size = 1, palette = c("blue", "red"), xlab = "",
+	add.params = list(size = 5), ylim = c(0, 9), bxp.errorbar = TRUE) + scale_y_continuous(n.breaks = 10) + 
+	stat_compare_means(comparisons = comparisons, method = "wilcox", label.y = c(8.7), size = 20, 
+	bracket.size = 1, label = "p.signif") + border() + PlotFonts
+dev.off()
