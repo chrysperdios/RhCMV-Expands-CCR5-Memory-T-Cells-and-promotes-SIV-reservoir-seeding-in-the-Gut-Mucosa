@@ -1,0 +1,25 @@
+#libraries
+library(readxl)
+library(tidyverse)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face="bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +  
+	font("legend.title", size = 30, face = "bold") + font("legend.text",  size = 30)
+
+comparisons = list(c("AIM", "CCR5"))
+
+#import data
+Fig_2D = read_excel("Supporting data values.xlsx", sheet = "Fig.2D")
+
+#Shannon entropy
+png(width = 500, height = 1000, file = "Cogent Shannon entropy.png")
+ggboxplot(Fig_2D, x = "group", xlab = "", y = "Shannon", ylab = "Shannon entropy (nat)", 
+	color = "group", bxp.errorbar = TRUE, add = "point", legend = "", ylim = c(0, 8), 
+	size = 2, palette = c("orange", "purple"), add.params = list(size = 8)) + 
+	scale_y_continuous(n.breaks = 10) + border() + stat_compare_means(
+	comparisons = comparisons, method = "t.test", label.y = c(7.6), label = "p.signif", 
+	paired = TRUE, size = 20, bracket.size = 1) + geom_line(aes(group = animal), 
+	alpha = 0.4, linewidth = 1) + PlotFonts
+dev.off()
