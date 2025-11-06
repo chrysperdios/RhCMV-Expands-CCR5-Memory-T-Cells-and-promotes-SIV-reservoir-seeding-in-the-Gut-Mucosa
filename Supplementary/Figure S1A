@@ -1,0 +1,22 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+comparisons = list(c("Neg", "Pos"))
+
+#import data
+Fig_S1A = read_excel("Supporting data values.xlsx", sheet = "Fig.S1A")
+
+#boxplot
+png(width = 1000, height = 1000, file = "CD4 cmv.png")
+ggboxplot(Fig_S1A, x = "Subpopulation", xlab = "", y = "count", ylab = "CD4+ T cell (10^3/uL)", 
+	color = "cmv", add = "jitter", size = 2, palette = c("blue", "red"), add.params = list(size = 8), 
+	ylim = c(0, 0.8), bxp.errorbar = TRUE) + scale_y_continuous(n.breaks = 10) + 
+	geom_pwc(aes(group = cmv), method = "wilcox_test", label = "p.signif", tip.length = 0.01, size = 1, 
+	label.size = 20, y.position = 0.7) + border() + PlotFonts
+dev.off()
