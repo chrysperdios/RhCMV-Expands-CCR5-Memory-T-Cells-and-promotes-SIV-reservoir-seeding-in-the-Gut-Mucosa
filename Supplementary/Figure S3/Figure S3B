@@ -1,0 +1,27 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+#import data
+Fig_S3B = read_excel("Supporting data values.xlsx", sheet = "Fig.S3B")
+
+#order factor levels
+Fig_S3B$sex = factor(Baseline_all$sex, levels = c("f", "m"))
+Fig_S3B$tissue = factor(Baseline_all$tissue, levels = c("Blood", "LN", "BM", "Duodenum", "Colon"))
+
+#boxplots
+boxplots_Base_CD4TotalMem.CCR5 = ggboxplot(Fig_S3B, x = "sex", xlab = "Sex", y = "CD4TotalMem.CCR5", 
+	ylab = "CCR5+ (% of CD4+ total memory cells)", color = "sex", add = "jitter", size = 2, legend = "",
+	palette = c("blue", "red"), add.params = list(size = 8), ylim = c(0, 80), bxp.errorbar = TRUE) + 
+	scale_y_continuous(n.breaks = 10) + stat_compare_means(comparisons = comparisons, method = "wilcox", 
+	label.y = c(75), size = 20, bracket.size = 1, label = "p.signif") + border() + PlotFonts
+
+png(width = 2000, height = 1000, file = "Sex Base_all_CD4TotalMem.CCR5.png")
+facet(boxplots_Base_CD4TotalMem.CCR5 , facet.by = c("tissue"), nrow = 1,
+	panel.labs.font = list(size = 60), panel.labs.font.x = list(size = 60))
+dev.off()
