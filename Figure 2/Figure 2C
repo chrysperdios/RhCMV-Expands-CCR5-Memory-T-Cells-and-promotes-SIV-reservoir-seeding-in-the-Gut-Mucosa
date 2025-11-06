@@ -1,0 +1,60 @@
+#libraries
+library(readxl)
+library(tidyverse)
+library(ComplexHeatmap)
+library(circlize)
+
+#import data
+Fig_2C = read_excel("Supporting data values.xlsx", sheet = "Fig.2C")
+
+#split into seperate matrices
+cogent_jaccard_list = Fig_2C %>% pivot_wider(names_from = Column, values_from = Value) %>% split(.$Matrix) %>%
+	map(~ {.x <- .x %>% select(-Matrix) %>% select(where(~!all(is.na(.x)))) %>% column_to_rownames("Row")
+		as.matrix(.x)})
+
+#individual graphs
+col_fun = colorRamp2(c(-1, 1), c("white", "red"))
+
+lgd = Legend(col_fun = col_fun, at = seq(0, 1, by = 0.2),
+	title = "Jaccard index", title_position = "topcenter",
+	direction = "horizontal", legend_width = unit(10, "cm"),
+	title_gp = gpar(fontsize = 20), labels_gp = gpar(fontsize = 10))
+	
+png(width = 500, height = 100, file = "legend.png")
+draw(lgd, just = "center")
+dev.off()
+
+png(width = 500, height = 500, file = "Cogent_EM83_TRB.png")
+Heatmap(cogent_jaccard_list$EM83, col = col_fun, row_names_gp = gpar(fontsize = 24),     
+	column_names_gp = gpar(fontsize = 24), show_heatmap_legend = FALSE,
+	cell_fun = function(j, i, x, y, width, height, fill) {
+	grid.text(sprintf("%.3f", cogent_jaccard_list$EM83[i, j]), x, y, gp = gpar(fontsize = 40))})
+dev.off()
+
+png(width = 500, height = 500, file = "Cogent_JJ72_TRB.png")
+Heatmap(cogent_jaccard_list$JJ72, col = col_fun, row_names_gp = gpar(fontsize = 24),     
+	column_names_gp = gpar(fontsize = 24), show_heatmap_legend = FALSE,
+	cell_fun = function(j, i, x, y, width, height, fill) {
+	grid.text(sprintf("%.3f", cogent_jaccard_list$JJ72[i, j]), x, y, gp = gpar(fontsize = 40))})
+dev.off()
+
+png(width = 500, height = 500, file = "Cogent_KC43_TRB.png")
+Heatmap(cogent_jaccard_list$KC43, col = col_fun, row_names_gp = gpar(fontsize = 24),     
+	column_names_gp = gpar(fontsize = 24), show_heatmap_legend = FALSE,
+	cell_fun = function(j, i, x, y, width, height, fill) {
+	grid.text(sprintf("%.3f", cogent_jaccard_list$KC43[i, j]), x, y, gp = gpar(fontsize = 40))})
+dev.off()
+
+png(width = 500, height = 500, file = "Cogent_LP17_TRB.png")
+Heatmap(cogent_jaccard_list$LP17, col = col_fun, row_names_gp = gpar(fontsize = 24),     
+	column_names_gp = gpar(fontsize = 24), show_heatmap_legend = FALSE,
+	cell_fun = function(j, i, x, y, width, height, fill) {
+	grid.text(sprintf("%.3f", cogent_jaccard_list$LP17[i, j]), x, y, gp = gpar(fontsize = 40))})
+dev.off()
+
+png(width = 500, height = 500, file = "Cogent_LP46_TRB.png")
+Heatmap(cogent_jaccard_list$LP46, col = col_fun, row_names_gp = gpar(fontsize = 24),     
+	column_names_gp = gpar(fontsize = 24), show_heatmap_legend = FALSE,
+	cell_fun = function(j, i, x, y, width, height, fill) {
+	grid.text(sprintf("%.3f", cogent_jaccard_list$LP46[i, j]), x, y, gp = gpar(fontsize = 40))})
+dev.off()
