@@ -1,0 +1,29 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+comparisons = list(c("neg", "pos"))
+
+#import data
+Fig_S3D = read_excel("Supporting data values.xlsx", sheet = "Fig.S3D")
+
+#order factor levels
+Fig_S3D$lcv = factor(Fig_S3D$lcv, levels = c("neg", "pos"))
+Fig_S3D$tissue = factor(Fig_S3D$tissue, levels = c("PBMC", "LN", "BM", "Duodenum", "Colon"))
+
+#boxplots
+boxplots_LCV_CD8TotalMem.CCR5 = ggboxplot(Fig_S3D, x = "lcv", xlab = "", y = "CD8TotalMem.CCR5", 
+	ylab = "CCR5+ (% of CD8+ total memory)", color = "lcv", add = "jitter", size = 2, legend = "",
+	palette = c("blue", "red"), add.params = list(size = 8), ylim = c(0, 80), bxp.errorbar = TRUE) + 
+	scale_y_continuous(n.breaks = 10) + stat_compare_means(comparisons = comparisons, method = "wilcox", 
+	label.y = c(74), size = 20, bracket.size = 1, label = "p.signif") + border() + PlotFonts
+
+png(width = 2000, height = 1000, file = "LCV Base_all CD8TotalMem.CCR5.png")
+facet(boxplots_LCV_CD8TotalMem.CCR5 , facet.by = c("tissue"), nrow = 1, panel.labs.font = list(size = 60), 
+	panel.labs.font.x = list(size = 60))
+dev.off()
