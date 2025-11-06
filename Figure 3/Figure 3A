@@ -1,0 +1,22 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) + 
+	font("legend.text", size = 30) + font("legend.title", size = 30, face = "bold")
+
+#import data
+Fig_3A = read_excel("Supporting data values.xlsx", sheet = "Fig.3A")
+
+#viremia per animal CMV status log10
+png(width = 1000, height = 1000, file = "Viremia all animals CMV.png")
+ggline(Fig_3A, x = "DPI", xlab = "Days Post Infection", y = "VClog", numeric.x.axis = TRUE, xlim = c(0, 28),
+	ylab = "Plasma VL (log10 copies/ml)", ylim = c(0, 9.1), color = "Animal", size = 1, point.size = NA, 
+	legend = "") + scale_y_continuous(n.breaks = 10, expand = c(0, 0)) + scale_x_continuous(breaks = c(0, 7, 14, 21, 28), 
+	expand = c(0, 0)) + scale_color_manual(values = c(JL54 = "red", IF12 = "red", MF56 = "red", FK53 = "red", 
+	HP61 = "red", IB41 = "red", JD37 = "red", JL60 = "red", KF08 = "blue", KN94 = "blue", FN40 = "blue", FN55 = "blue", 
+	JH80 = "red", KF18 = "red", JN26 = "red", JC50 = "blue", RF73 = "blue", RF74 = "blue", RF75 = "blue")) + border() +
+	PlotFonts + geom_hline(yintercept = 1.9, linetype = 2) + theme(plot.margin = margin(0.5, 1.2, 0.1, 0.1, "cm"))
+dev.off()
