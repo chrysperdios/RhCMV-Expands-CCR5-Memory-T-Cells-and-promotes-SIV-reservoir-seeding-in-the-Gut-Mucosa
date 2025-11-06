@@ -1,0 +1,24 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+comparisons = list(c("neg", "pos"))
+	
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) + 
+	font("legend.text", size = 30) + font("legend.title", size = 30, face = "bold")
+
+#import data
+Fig_3D = read_excel("Supporting data values.xlsx", sheet = "Fig.3D")
+
+#set CMV serotype factor levels
+Fig_3D$CMV = factor(Fig_3D$CMV, levels = c("neg", "pos"))
+
+png(width = 500, height = 1000, file = "D27_28 viremia.png")
+ggboxplot(Fig_3D, x = "CMV", y = "VClog", ylab = "Plasma VL (log10 copies/ml)", color = "CMV", 
+	add = c("jitter"), legend = "", size = 1, palette = c("blue","red"), xlab = "",
+	add.params = list(size = 8), ylim = c(0, 9), bxp.errorbar = TRUE) + scale_y_continuous(n.breaks = 10) + 
+	stat_compare_means(comparisons = comparisons, method = "wilcox", label.y = c(8), size = 20, 
+	bracket.size = 1, label = "p.signif") + border() + PlotFonts
+dev.off()
