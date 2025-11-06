@@ -7,8 +7,6 @@ PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, fa
 	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
  	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
 
-comparisons = list(c("Neg", "Pos"))
-
 #import data
 Fig_S1A = read_excel("Supporting data values.xlsx", sheet = "Fig.S1A")
 
