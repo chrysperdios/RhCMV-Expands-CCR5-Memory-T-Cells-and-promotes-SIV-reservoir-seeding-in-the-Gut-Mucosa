@@ -1,0 +1,30 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+set.seed(3686)
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+comparisons = list(c("neg", "pos"))
+
+#import data
+Fig_4D = read_excel("Supporting data values.xlsx", sheet = "Fig.4D")
+
+#set order of factor levels
+Fig_4D$cmv = factor(Fig_4D$cmv, levels = c("neg", "pos"))
+Fig_4D$tissue = factor(Fig_4D$tissue, levels = c("PBMC", "LN", "BM", "Duodenum", "Colon"))
+
+#CD4TotalMem.HLADR
+boxplots_SIV_CD4TotalMem.HLADR = ggboxplot(Fig_4D, x = "cmv", xlab = "CMV", y = "CD4TotalMem.HLADR", 
+	ylab = "HLADR+ (% of CD4 Total Memory)", color = "cmv", add = "jitter", size = 2, legend = "",
+	palette = c("blue", "red"), add.params = list(size = 8), ylim = c(0, 29), bxp.errorbar = TRUE) + 
+	scale_y_continuous(n.breaks = 10) + stat_compare_means(comparisons = comparisons, method = "wilcox", 
+	label.y = c(26), size = 20, bracket.size = 1, label = "p.signif") + border() + PlotFonts
+
+png(width = 2000, height = 1000, file = "SIV_all CD4TotalMem.HLADR.png")
+facet(boxplots_SIV_CD4TotalMem.HLADR, facet.by = c("tissue"), nrow = 1, panel.labs.font = list(size = 60), 
+	panel.labs.font.x = list(size = 60))
+dev.off()
