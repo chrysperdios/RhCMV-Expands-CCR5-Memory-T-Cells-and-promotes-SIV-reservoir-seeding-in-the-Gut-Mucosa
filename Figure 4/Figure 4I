@@ -1,0 +1,22 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+comparisons = list(c(">10", "<10"))
+
+#import data
+Fig_4I = read_excel("Supporting data values.xlsx", sheet = "Fig.4I")
+
+#boxplot
+png(width = 500, height = 1000, file = "SIV_Ddnm IFNA CD8TotalMem.Ki67.png")
+ggboxplot(Fig_4I, x = "IFNAlim", xlab = "IFNa (pg/ml)", y = "CD8TotalMem.Ki67", 
+	ylab = "Ki-67+ (% of CD8+ Total Memory)", add = "jitter", size = 2, palette = c("blue", "red"), 
+	add.params = list(size = 8, color = "cmv"), ylim = c(0, 70), bxp.errorbar = TRUE) + 
+	scale_y_continuous(n.breaks = 10) + stat_compare_means(comparisons = comparisons, method = "wilcox", 
+	label.y = c(65), size = 20, bracket.size = 1, label = "p.signif") + border() + PlotFonts
+dev.off()
