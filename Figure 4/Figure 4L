@@ -1,0 +1,33 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+library(scales)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+options(scipen = 999)
+comparisons = list(c("neg", "pos"))
+
+#import data
+Fig_4L = read_excel("Supporting data values.xlsx", sheet = "Fig.4L")
+
+#set order of factor levels
+Fig_4L$Tissue = factor(Fig_4L$Tissue, level = c("Duodenum", "Colon"))
+
+#Duodenum-Colon
+gut_CD4TotalMem.CCR5 = ggscatter(Fig_4L, x = "Cell_per_1e6", y = "CD4TotalMem.CCR5", 
+	color = "cmv", size = 8, palette = c("blue", "red"), ylim = c(0, 50),
+	ylab = "CCR5+ (% of CD4+ total memory)", 
+	xlab = "SIV DNA copies/million cells equivalence") + geom_smooth(aes(group = 1), 
+	method = "lm", color = "black") + scale_y_continuous(n.breaks = 10) + 
+	scale_x_log10(breaks = c(10000, 100000, 1000000), labels = trans_format("log10", 
+	math_format(10^.x))) + border() + stat_cor(method = "spearman", size = 15, label.y = 45, 
+	r.accuracy = 0.001, label.sep = "\n", p.accuracy = 0.0001) + PlotFonts
+
+png(width = 1600, height = 1000, file = "Gut_SIV_CD4TotalMem.CCR5.png")
+facet(gut_CD4TotalMem.CCR5, facet.by = c("Tissue"), nrow = 1, 
+	panel.labs.font = list(size = 60), panel.labs.font.x = list(size = 60))
+dev.off()
