@@ -1,0 +1,25 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+comparisons = list(c("neg", "pos"))
+
+#import data
+Fig_S8A = read_excel("Supporting data values.xlsx", sheet = "Fig.S8A")
+
+#CMV serostatus level order
+Fig_S8A$cmv = factor(Fig_S8A$cmv, levels = c("neg", "pos"))
+
+#boxplot
+png(width = 500, height = 1000, file = "SIV_Ddnm CD4TotalMem.Bcl2.png")
+ggboxplot(Fig_S8A, x = "cmv", xlab = "CMV", y = "CD4TotalMem.Bcl2", 
+	ylab = "Bcl-2+ (MFI of CD4+ total memory)", color = "cmv", add = "jitter", size = 2, legend = "",
+	palette = c("blue", "red"), add.params = list(size = 8), ylim = c(0, 700), bxp.errorbar = TRUE) + 
+	scale_y_continuous(n.breaks = 10) + stat_compare_means(comparisons = comparisons, method = "wilcox", 
+	label.y = c(660), size = 20, bracket.size = 1, label = "p.signif") + border() + PlotFonts
+dev.off()
