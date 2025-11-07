@@ -1,0 +1,23 @@
+#load libraries
+library(readxl)
+library(ggpubr)
+
+#settings
+PlotFonts = font("title", size = 40, face = "bold") + font("xlab", size = 40, face = "bold") + 
+	font("ylab", size = 40, face = "bold") + font("xy.text", size = 40) +
+ 	font("legend.title", size = 30, face = "bold") + font("legend.text", size = 30)
+
+#import data
+Fig_S9C = read_excel("Supporting data values.xlsx", sheet = "Fig.S9C")
+
+#factor level order
+Fig_S9C$CD8Tem_Quant = factor(Fig_S9C$CD8Tem_Quant, levels = c("Q1", "Q2", "Q3", "Q4"))
+
+#boxplot
+png(width = 1000, height = 1000, file = "CXCL10 Kruskal-Wallis.png")
+ggboxplot(Fig_S9C, x = "CD8Tem_Quant", xlab = "", y = "CXCL10", bxp.errorbar = TRUE, ylab = "CXCL10 (NPX)", 
+	add = "jitter", add.params = list(size = 8), ylim = c(0, 20)) + scale_y_continuous(n.breaks = 10) + 
+	stat_compare_means(method = "kruskal.test", size = 15, bracket.size = 1, label.y = 0.1) + 
+	geom_pwc(aes(group = CD8Tem_Quant), method = "dunn_test", label = "p.signif", tip.length = 0.01, 
+	size = 1, label.size = 20, y.position = c(11, 12.5, 14, 15.5, 17, 18.5)) + border() + PlotFonts
+dev.off()
